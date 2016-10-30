@@ -36,6 +36,7 @@
     "html-loader": "^0.4.4",
     "html-webpack-plugin": "^2.24.0",
     "jquery": "^3.1.1",
+    "moment": "^2.15.2",
     "ng-redux": "^3.4.0-beta.1",
     "node-sass": "^3.10.1",
     "redux": "^3.6.0",

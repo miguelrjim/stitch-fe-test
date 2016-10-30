@@ -4,7 +4,8 @@
 import template from './index.html';
 import autobind from 'autobind-decorator';
 import './index.scss';
-import {addProduct, removeProduct} from '../../actions/products';
+import {addProduct, removeProduct, getPage} from '../../actions/products';
+import {setFilterState} from '../../actions/filter';
 
 class ProductsController {
   constructor($scope, $state, $ngRedux) {
@@ -12,14 +13,16 @@ class ProductsController {
     this.$scope = $scope;
     const unsubscribe = $ngRedux.connect(this.mapStateToThis, {
       addProduct,
-      removeProduct
+      removeProduct,
+      setFilterState,
+      getPage
     })(this)
     $scope.$on('$destroy', unsubscribe);
   }
 
   mapStateToThis(state) {
     return {
-      products: state.app.currentProducts.map(id => state.products[id]),
+      products: state.app.shownProducts.map(id => state.products[id]),
       pages: (() => {
         let pages = [];
         for(let i=1;i<=state.app.pages;i++) pages.push(i);
@@ -54,6 +57,18 @@ class ProductsController {
   @autobind
   deleteProduct(id) {
     this.removeProduct(id);
+  }
+
+  @autobind
+  updateFilter(prop, value) {
+    this.setFilterState({
+      [prop]: value
+    })
+  }
+
+  @autobind
+  changePage(page) {
+    this.getPage(page);
   }
 }
 

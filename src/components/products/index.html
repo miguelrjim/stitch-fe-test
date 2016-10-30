@@ -1,5 +1,16 @@
 <div class="row">
   <div class="columns small-4">
+    <div>
+      <div>
+        Filter by title: <input type="text" editable="$ctrl.title" on-change="$ctrl.updateFilter" on-change-args="'title'" />
+      </div>
+      <div>
+        Start date <input type="text" editable="$ctrl.startDate" on-change="$ctrl.updateFilter" on-change-args="'startDate'" />
+      </div>
+      <div>
+        End date <input type="text" editable="$ctrl.endDate" on-change="$ctrl.updateFilter" on-change-args="'endDate'" />
+      </div>
+    </div>
     <table class="products hover">
       <tr>
         <th>Id</th>
@@ -19,7 +30,7 @@
     </table>
     <ul class="pagination">
       <li class="pagination-previous" ng-class="{disabled: $ctrl.page === 1}">Previous</li>
-      <li ng-repeat="page in $ctrl.pages" ng-class="{current: $ctrl.page === page}"><a>{{page}}</a></li>
+      <li ng-repeat="page in $ctrl.pages" ng-class="{current: $ctrl.page === page}" ng-click="$ctrl.changePage(page)"><a>{{page}}</a></li>
       <li class="pagination-next" ng-class="{disabled: $ctrl.page === $ctrl.totalPages}">Next</li>
     </ul>
   </div>

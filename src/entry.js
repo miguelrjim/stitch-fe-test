@@ -14,7 +14,7 @@ import editableDirective from './directives/editable';
 import {getProductsCount} from './services/products';
 import rootReducer from './reducers';
 import createLogger from 'redux-logger';
-import {getPage, getProduct} from './actions/products';
+import {filterProducts, getProduct} from './actions/products';
 import {setAppState} from './actions/app';
 import './main.scss';
 import 'font-awesome-webpack';
@@ -37,11 +37,13 @@ export default angular.module('Shopify', [angularUIRouter, ngRedux])
       url: 'products',
       component: 'products',
       resolve: {
-        _products: ($ngRedux) => $ngRedux.dispatch(getPage()),
         _productsCount: ($ngRedux) => getProductsCount().then(count => $ngRedux.dispatch(setAppState({
           total: count,
           pages: Math.ceil(count/$ngRedux.getState().app.size)
         })))
+          .then(() => {
+            $ngRedux.dispatch(filterProducts())
+          })
       }
     });
     $stateProvider.state({

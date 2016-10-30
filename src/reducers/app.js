@@ -6,7 +6,9 @@ import {REMOVE_PRODUCT} from '../actions/products';
 export default function(state = {
   size: 50,
   fetched: 0,
-  currentProducts: []
+  currentProducts: [],
+  currentFetched: 0,
+  shownProducts: []
 }, action) {
   let newState;
   switch(action.type) {

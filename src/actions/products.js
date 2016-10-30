@@ -1,6 +1,7 @@
 /**
  * Created by mjimenez on 10/30/16.
  */
+import moment from 'moment';
 import {fetchProducts, getProductsCount, fetchProduct, updateProduct, updateVariant, createProduct, deleteProduct} from '../services/products';
 import {setAppState} from './app';
 import {setFilterState} from './filter';
@@ -137,19 +138,25 @@ export function getPage(page = 1) {
     return new Promise((resolve, reject) => {
       let state = getState();
       let prom;
-      if(page * state.app.size <= state.app.currentFetched || page * state.app.size >= state.app.currentTotal) {
-        let begin = (page-1)*state.app.size;
-        prom = Promise.resolve(state.app.currentProducts.slice(begin, begin+state.app.size));
+      if(page * state.app.size <= state.app.currentFetched || state.app.currentFetched == state.app.currentTotal) {
+        prom = Promise.resolve(state.app.currentProducts);
       }
       else {
         prom = fetchProducts(page, state.filter.title, state.filter.startDate, state.filter.endDate)
           .then(products => dispatch(addProducts(products)).then(products => {
-            let ids = products.map(product => product.id);
-            dispatch(setAppState({currentProducts: state.app.currentProducts.concat(ids)}));
-            return ids;
+            let currentProducts = state.app.currentProducts.concat(products.map(product => product.id));
+            dispatch(setAppState({
+              currentProducts: state.app.currentProducts.concat(products.map(product => product.id)),
+              currentFetched: state.app.currentFetched + products.length
+            }));
+            return currentProducts;
           }), reject)
       }
       prom.then(products => {
+        let begin = (page-1)*state.app.size;
+        return products.slice(begin, begin+state.app.size);
+      })
+        .then(products => {
         dispatch(setAppState({
           shownProducts: products,
           page
@@ -165,12 +172,24 @@ export function filterProducts(title, startDate, endDate) {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       let state = getState();
-      let anyFilter = title || startDate || endDate;
+      let shouldFetch = state.app.fetched === 0 || (state.app.fetched !== state.app.total && (!!title || !!startDate || !!endDate));
       let currentProducts;
       let currentFetched;
-      if(!anyFilter || state.app.fetched === state.app.total) {
-        currentFetched = state.app.fetched;
-        currentProducts = Object.keys(state.products);
+      if(!shouldFetch) {
+        let filteredProducts = Object.keys(state.products).map(id => state.products[id]);
+        if(title) {
+          filteredProducts = filteredProducts.filter(product => product.title.indexOf(title) !== -1);
+        }
+        if(startDate) {
+          startDate = moment(startDate);
+          filteredProducts = filteredProducts.filter(product => startDate.isBefore(product.created_at));
+        }
+        if(endDate) {
+          endDate = moment(endDate);
+          filteredProducts = filteredProducts.filter(product => endDate.isAfter(product.created_at));
+        }
+        currentProducts = filteredProducts.map(product => product.id);
+        currentFetched = currentProducts.length;
       }
       else {
         currentFetched = 0;
@@ -180,20 +199,16 @@ export function filterProducts(title, startDate, endDate) {
         currentFetched,
         currentProducts
       }));
-      dispatch(setFilterState({
-        title,
-        startDate,
-        endDate
-      }))
       let prom;
-      if(!anyFilter) {
-        prom = Promise.resolve(state.app.total);
+      if(!shouldFetch) {
+        prom = Promise.resolve(currentFetched);
       }
       else {
         prom = getProductsCount(title, startDate, endDate);
       }
       prom.then(total => dispatch(setAppState({
-        currentTotal: total
+        currentTotal: total,
+        pages: Math.ceil(total / state.app.size)
       })))
         .then(() => dispatch(getPage()))
         .then(resolve, reject);

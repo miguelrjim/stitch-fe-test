@@ -105,7 +105,7 @@ export function deleteProduct(id) {
 function addFilters(title, startDate, endDate) {
   let filters = [];
   if(title) filters.push(`title=${title}`);
-  if(startDate) filters.push(`startDate=${startDate}`);
-  if(endDate) filters.push(`endDate=${endDate}`);
+  if(startDate) filters.push(`created_at_min=${startDate}`);
+  if(endDate) filters.push(`created_at_max=${endDate}`);
   return filters.join('&');
 }
