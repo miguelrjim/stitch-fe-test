@@ -9,6 +9,7 @@ import {addProduct, removeProduct} from '../../actions/products';
 class ProductsController {
   constructor($scope, $state, $ngRedux) {
     this.$state = $state;
+    this.$scope = $scope;
     const unsubscribe = $ngRedux.connect(this.mapStateToThis, {
       addProduct,
       removeProduct
@@ -40,7 +41,8 @@ class ProductsController {
 
   @autobind
   addNew(title) {
-    let {$state} = this;
+    let {$state, $scope} = this;
+    $scope.$broadcast('new:clear');
     this.addProduct(title)
       .then(id => {
         $state.go('product', {

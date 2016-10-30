@@ -16,7 +16,8 @@ export default function() {
       transform: '&',
       unselectRadio: '=',
       unselectRadioHandler: '@',
-      placeholder: '@'
+      placeholder: '@',
+      editableId: '@'
     },
     link: (scope, elem, attrs) => {
       let currentValue      = '';
@@ -27,15 +28,22 @@ export default function() {
       let isSelect          = isInput && elem.is('select');
       let focused           = false;
 
-      //
-      let unregister = scope.$watch('editable', val => {
+      function updateValue(val) {
         if(focused) return; // If its currently being edited abort the unregister
         currentValue = val;
         setTimeout(() => { elem[isInput ? 'val' : 'text'](val) });
         if(currentValue === undefined || currentValue === '' || currentValue === null) {
           elem.addClass('empty');
         }
-      });
+      }
+      //
+      let unregister = scope.$watch('editable', updateValue);
+
+      if(scope.editableId) {
+        scope.$on(`${scope.editableId}:clear`, () => {
+          updateValue('');
+        });
+      }
 
       // Setup paste event handler if this isn't an input element
       if(!isInput) {
