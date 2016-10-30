@@ -1,0 +1,31 @@
+[editable] {
+&:not(input):not(select):not(textarea) {
+
+  &:active,&:focus {
+    outline: none;
+    + .fa-pencil {
+      display: none;
+    }
+  }
+  &.empty {
+    &:not(:focus):after {
+      content: attr(placeholder);
+      font-style: italic;
+      color: lightgray;
+    }
+  }
+}
+}
+
+.fa-pencil {
+  font-size: 16px;
+  line-height: 16px;
+  cursor: pointer;
+  color: darkgray;
+  opacity: 0.4;
+  margin-left: 5px;
+
+  &:hover {
+    opacity: 1;
+  }
+}

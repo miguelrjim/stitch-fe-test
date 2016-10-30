@@ -1,0 +1,16 @@
+@import "foundation";
+
+//Override
+@mixin clearfix {
+
+};
+
+//@include foundation-grid;
+@include foundation-global-styles;
+@include foundation-flex-grid;
+@include foundation-flex-classes;
+@include foundation-text-alignment;
+@include table;
+@include table-hover;
+@include foundation-pagination;
+@include foundation-label;

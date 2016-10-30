@@ -1,0 +1,9 @@
+.products {
+  width: 100%;
+  tr:not(:first-child) {
+    cursor: pointer;
+  }
+  .fa-trash-o, .fa-pencil {
+    cursor: pointer;
+  }
+}

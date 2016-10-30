@@ -1,0 +1,20 @@
+<div>
+  <span class="label">ID:</span><span class="secondary label">{{$ctrl.id}}</span>
+</div>
+<div>
+  <span class="label">Title:</span><span class="secondary label" editable="$ctrl.title" on-change="$ctrl.updateProp" on-change-args="'title'"></span>
+</div>
+<div>
+  <span class="label">Total Stock:</span><span class="secondary label">{{$ctrl.stock}}</span>
+</div>
+<div>
+  Variations
+  <div class="row">
+    <div ng-repeat="variant in $ctrl.variants" class="columns small-3">
+      <div><span class="label">Title:</span><span class="secondary label" editable="variant.title" on-change="$ctrl.updateVariantProp" on-change-args="[variant.id, 'title']"></span></div>
+      <div><span class="label">Stock:</span><span class="secondary label" editable="variant.inventory_quantity" on-change="$ctrl.updateVariantProp" on-change-args="[variant.id, 'inventory_quantity']" transform="$ctrl.parseInt"></span></div>
+      <div><span class="label">Grams:</span><span class="secondary label" editable="variant.grams" on-change="$ctrl.updateVariantProp" on-change-args="[variant.id, 'grams']" transform="$ctrl.parseInt"></span></div>
+      <div><span class="label">Price:</span><span class="secondary label" editable="variant.price" on-change="$ctrl.updateVariantProp" on-change-args="[variant.id, 'price']"></span></div>
+    </div>
+  </div>
+</div>
